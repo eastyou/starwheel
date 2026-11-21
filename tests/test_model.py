@@ -266,19 +266,29 @@ class TimeAndRotationTest(unittest.TestCase):
 
 
 class HorizontalCoordinateTest(unittest.TestCase):
+    # 角度以度为单位，1e-4 度约 0.36 角秒，远严于教学用途所需精度，
+    # 同时避免不同平台 libm 的最后一位差异造成假失败。
+    ANGLE_DELTA = 1e-4
+
     def test_meridian_star_reaches_zenith(self) -> None:
         altitude = altitude_degrees(10.0, 31.2, 31.2, 10.0)
-        self.assertAlmostEqual(altitude, 90.0, places=6)
+        self.assertAlmostEqual(altitude, 90.0, delta=self.ANGLE_DELTA)
 
     def test_meridian_equatorial_star_is_south(self) -> None:
-        self.assertAlmostEqual(azimuth_degrees(10.0, 0.0, 31.2, 10.0), 180.0, places=6)
+        self.assertAlmostEqual(
+            azimuth_degrees(10.0, 0.0, 31.2, 10.0), 180.0, delta=self.ANGLE_DELTA
+        )
 
     def test_meridian_circumpolar_star_is_north(self) -> None:
-        self.assertAlmostEqual(azimuth_degrees(10.0, 60.0, 31.2, 10.0), 0.0, places=6)
+        self.assertAlmostEqual(
+            azimuth_degrees(10.0, 60.0, 31.2, 10.0), 0.0, delta=self.ANGLE_DELTA
+        )
 
     def test_altitude_formula_at_meridian(self) -> None:
         altitude = altitude_degrees(10.0, 0.0, 31.2, 10.0)
-        self.assertAlmostEqual(altitude, 90.0 - 31.2, places=6)
+        self.assertAlmostEqual(
+            altitude, 90.0 - 31.2, delta=self.ANGLE_DELTA
+        )
 
     def test_sirius_is_below_horizon_in_summer_evening(self) -> None:
         sidereal = local_sidereal_hours(7, 21)
