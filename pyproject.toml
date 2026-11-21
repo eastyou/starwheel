@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "starwheel"
+version = "0.1.0"
+description = "旋转星图：A4 可打印星盘、遮罩与当夜星空页"
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+authors = [{ name = "eastyou" }]
+keywords = ["planisphere", "starwheel", "astronomy", "print", "a4", "cli"]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: OS Independent",
+  "Environment :: Console",
+  "Topic :: Education",
+  "Topic :: Scientific/Engineering :: Astronomy",
+]
+
+[project.scripts]
+starwheel = "starwheel.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/eastyou/starwheel"
+Source = "https://github.com/eastyou/starwheel"
+
+[tool.setuptools]
+packages = ["starwheel"]

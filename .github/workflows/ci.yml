@@ -1,0 +1,34 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        python-version: ["3.10", "3.13"]
+        include:
+          - os: ubuntu-22.04
+            python-version: "3.9"
+    env:
+      PYTHONIOENCODING: utf-8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Run unit tests
+        run: python -m unittest discover -s tests -v
+      - name: Smoke test starwheel generation
+        run: |
+          python -m starwheel --latitude 31.2 --month 3 --hour 21 --title 旋转星图 -o starwheel.html
+          python -c 'p=open("starwheel.html", encoding="utf-8").read(); assert p.count("<section") == 3; assert "星盘页" in p; assert "遮罩页" in p; assert "当夜星空页" in p; assert "北极星" in p; assert "A4 portrait" in p; print("smoke ok")'
+      - name: Smoke test invalid parameter exit code
+        run: |
+          python -c 'import subprocess, sys; code = subprocess.call([sys.executable, "-m", "starwheel", "--latitude", "70", "-o", "bad.html"]); assert code == 2; print("exit code ok")'
